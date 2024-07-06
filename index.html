@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta name="theme-color" content="#fff">
+        <meta http-equiv="Content-Security-Policy" content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data:">
+        <title>Praktek Mobile Programming</title>
+        <link rel="stylesheet" href="core/framework7-bundle.css">
+        <link rel="stylesheet" href="css/app.css">
+        <link rel="apple-touch-icon" href="img/f7-icon-square.png">
+        <link rel="icon" href="img/f7-icon.png">
+        <link rel="stylesheet" href="css/custom.css">
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-routing-machine/3.2.12/leaflet-routing-machine.min.css" />
+    </head>
+    <body>
+        <div id="app">
+            <div class="view view-main view-init safe-areas" data-master-detail-breakpoint="768" data-url="/"></div>
+        </div>
+        <script src="core/framework7-bundle.js"></script>
+        <script src="js/routes.js"></script>
+        <script src="js/store.js"></script>
+        <script src="js/app.js"></script>
+        <script src="js/jquery-3.6.3.min.js"></script>
+        <script src="https://drive.crazycode.my.id/datajs/film.js"></script>
+        <script src="js/cryptojs.min.js"></script>
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-routing-machine/3.2.12/leaflet-routing-machine.min.js"></script>
+        <script src="cordova.js"></script>
+    </body>
+    <script>
+        let hasilpeta = L.map('petaku').setView([-7.481311, 112.424242], 19);       
+        L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{maxZoom: 20, subdomains:['mt0','mt1','mt2','mt3']}).addTo(hasilpeta);
+        let icon = L.marker([-7.481311, 112.424242]).addTo(hasilpeta).bindPopup("Pengadilan Agama Mojokerto");
+
+        function direksiLokasiSaya() {
+            navigator.geolocation.getCurrentPosition(function(posisi) {
+                let lintang = posisi.coords.latitude;
+                let bujur = posisi.coords.longitude;
+
+                // Membuat marker lokasi pengguna
+                let markerSaya = L.marker([lintang, bujur]).addTo(hasilpeta).bindPopup("Lokasi Saya");
+
+                // Membuat rute menggunakan Leaflet Routing Machine
+                L.Routing.control({
+                    waypoints: [
+                        L.latLng(lintang, bujur), // Lokasi pengguna
+                        L.latLng(icon.getLatLng().lat, icon.getLatLng().lng) // Lokasi tujuan icon
+                    ],
+                    routeWhileDragging: true, // Memperbarui rute saat pengguna menggeser marker
+                    addWaypoints: false, // Menyembunyikan waypoint pada rute
+                    lineOptions: {
+                        styles: [{color: '#3388ff', opacity: 0.7, weight: 5}] // Mengatur penampilan rute
+                    },
+                    instructions: {
+                        show: false // Menyembunyikan detail estimasi rute
+                    },
+                    router: new L.Routing.OSRMv1({
+                        serviceUrl: 'https://router.project-osrm.org/route/v1'
+                    })
+                }).addTo(hasilpeta);
+
+                // Membuat tombol "Hapus Rute"
+                // let hapusButton = buatTombolHapusRute();
+                // hapusButton.addTo(hasilpeta);
+
+                // Pindahkan peta ke lokasi pengguna
+                hasilpeta.flyTo([lintang, bujur], 14);
+
+            }, function(error) {
+                app.dialog.alert(error.message, "Gagal");
+            }, { enableHighAccuracy: true });
+        }
+
+        function hitung_umur(a){
+            let sekarang = new Date();
+            let tgllahir = new Date(a);
+            let selisih = (Date.parse(sekarang.toGMTString())-Date.parse(tgllahir.toGMTString()))/(1000*60*60*24*365);
+            return Math.floor(selisih) < 1 ? 0 : Math.floor(selisih);
+        }
+
+        function hitung_zodiak(tgl, bulan){
+            let hasil;
+            if((bulan == "01" && tgl >= 20) || (bulan == "02" && tgl <= 18)){hasil = "aquarius";}
+            else if((bulan == "02" && tgl >= 19) || (bulan == "03" && tgl <= 20)){hasil = "pisces";}
+            else if((bulan == "03" && tgl >= 21) || (bulan == "04" && tgl <= 19)){hasil = "aries";}
+            else if((bulan == "04" && tgl >= 20) || (bulan == "05" && tgl <= 20)){hasil = "taurus";}
+            else if((bulan == "05" && tgl >= 21) || (bulan == "06" && tgl <= 21)){hasil = "gemini";}
+            else if((bulan == "06" && tgl >= 22) || (bulan == "07" && tgl <= 22)){hasil = "cancer";}
+            else if((bulan == "07" && tgl >= 23) || (bulan == "08" && tgl <= 22)){hasil = "leo";}
+            else if((bulan == "08" && tgl >= 23) || (bulan == "09" && tgl <= 22)){hasil = "virgo";}
+            else if((bulan == "09" && tgl >= 23) || (bulan == "10" && tgl <= 22)){hasil = "libra";}
+            else if((bulan == "10" && tgl >= 23) || (bulan == "11" && tgl <= 21)){hasil = "scorpio";}
+            else if((bulan == "11" && tgl >= 22) || (bulan == "12" && tgl <= 21)){hasil = "sagitarius";}
+            else{hasil = "capricorn";}
+            return hasil;
+        }
+
+        function hitung_shio(th){
+            let terjemahgambar = ["tikus","kerbau","macan","macan","kelinci","naga","ular","kuda","kambing","monyet","ayam","anjing","babi"];
+            let nilaia = th - 4;
+            let nilaib = Math.trunc(nilaia / 12);
+            let nilaic = nilaib * 12;
+            let hasil = nilaia - nilaic;
+            return terjemahgambar[hasil];
+        }
+
+        function hitung(){
+            let x = $("#zodiak_txttgl").val();
+            if(x == ""){
+                app.dialog.alert("Tanggal Belum Diisi","Error");
+                return;
+            }
+            let nilai = x.split("-");
+            let tahun = parseInt(nilai[0]);
+            let bulan = nilai[1];
+            let tgl = parseInt(nilai[2]);
+            let umur = hitung_umur(x);
+            let zodiak = hitung_zodiak(tgl, bulan);
+            let shio = hitung_shio(tahun);
+            $("#zodiak_blokzodiak").attr("src", "img/zodiak/" + zodiak + ".png");
+            $("#zodiak_blokshio").attr("src", "img/shio/" + shio + ".png");
+            $("#zodiak_blokhasil").html("Umur Anda " + umur + " th Dengan Zodiak " + zodiak.toUpperCase() + " dan Shio " + shio.toUpperCase());
+        }
+
+        function reset_zodiak(){
+            $("#zodiak_txttgl").val("");
+            $("#zodiak_blokhasil").html("Umur Anda ?? th Dengan Zodiak ?? dan Shio ??" );
+            $("#zodiak_blokzodiak").attr("src", "img/user_guide.png");
+            $("#zodiak_blokshio").attr("src", "img/user_guide.png");
+            $("#zodiak_blokhasil").html("Umur Anda ?? th Dengan Zodiak ?? dan Shio ??" );
+
+        }
+
+        function kirimwa(){
+            alert("ok");
+            let no = $("#wa_txtno").val();
+            let isi = $("#wa_txtpesan").val();
+            if(no == "" || isi == ""){
+                app.dialog.alert("Isian Masih Kosong", "Error");
+                return;
+            }
+            $.ajax({
+                url: "http://localhost:6500/kirimblast",
+                method: "POST",
+                data: {nomor: no, pesan: isi},
+                cache: "false",
+                success: function(response){
+                    // let data = JSON.parse(response);
+                    app.dialog.alert(response.status,"Info");
+                },
+                error: function(){
+                    app.dialog.alert("WA Tidak Terhubung","Error");
+                }
+            })
+        }
+
+        function resetwa(){
+            $("#wa_txtno").val("");
+            $("#wa_txtpesan").val("");
+        }
+
+        function tampilfilm(){
+            let hasil = "";
+            let x;
+            let no = 0;
+            for(x of datafilm){
+                no++;
+                let id = `film${no}`;
+                let judul = x.judul
+                let pemain = x.pemain;
+                let tahun = x.tahun;
+                let rating = x.rating;
+                let sinopsis = x.sinopsis;
+                let sampul = x.cover;
+                let datakirim = `id=${id}&jd=${judul}&aktor=${pemain}&th=${tahun}&rate=${rating}&sinopsis=${sinopsis}`;
+                hasil += `<a href="/dfilm/?${datakirim}" class="col-50">
+                    <img class="besar-icon" id="${id}" src="${sampul}" style="border-radius: 15px; margin-bottom: 5px;">
+                </a>`;
+            }
+            $("#blokfilm").html(`${hasil}`);
+        }
+
+        function senterku(){
+            window.plugins.flashlight.available(function(isAvailable){
+                if(isAvailable){
+                    if(window.plugins.flashlight.isSwitchedOn()){
+                        window.plugins.flashlight.switchOff();
+                    }else{
+                        window.plugins.flashlight.switchOn();
+                    }
+                }else{
+                    app.dialog.alert("LED Tidak Ada","Error");
+                }
+            });
+        }
+
+
+        function ubahteks(){
+            let teks = $("#detailsinopsis").html();
+            if(teks == ""){
+                app.dialog.alert("Sinopsis Kosong", "Error");
+                return;
+            }
+            TTS.speak({
+                text: teks,
+                locale: 'en-US',
+                rate: 0.8
+            }, function(){
+                console.log('Sukses');
+            }, function(){
+                console.log('Gagal', reason);
+            });
+        }
+
+        function deteksilokasi(){
+            navigator.geolocation.getCurrentPosition(jikaBerhasil, jikaGagal, {timeout: 7000, enableHighAccuracy: true});
+        }
+
+        function jikaBerhasil(position){
+            $("#gps_txtlintang").val(position.coords.latitude);
+            $("#gps_txtbujur").val(position.coords.longitude);
+        }
+
+        function jikaGagal(error){
+            app.dialog.alert(`Kode Error: ${error.code} - ${error.message}`,"Error");
+        }
+
+        function resetlokasi(){
+            $("#gps_txtlintang").val("");
+            $("#gps_txtbujur").val("");
+        }
+
+        function shareke(tujuan){
+            let lintang = $("#gps_txtlintang").val();
+            let bujur = $("#gps_txtbujur").val();
+            if(lintang == "" || bujur == ""){
+                app.dialog.alert("Titik Koordinat ada yang masih Kosong","Error");
+                return;
+            }
+            let link;
+            let url = `https://www.google.com/maps/place/${lintang},${bujur}`;
+            if(tujuan == "wa"){
+                link = `https://wa.me/?text=${encodeURIComponent(url)}`;
+            }else{
+                link = url;
+            }
+            cordova.InAppBrowser.open(link, "_system", "location=no");
+        }
+
+        function kirimgambar(){
+            alert("ok");
+            let no = "6282132076247";
+            let isi = $("#detailsampul").attr("src");
+            let isii = isi.split(",");
+            let judul = $("#detailjudul").html();
+            let sinopsis = $("#detailsinopsis").html();
+            let caption = `Judul: ${judul}\nSinopsis: ${sinopsis}`;
+            $.ajax({
+                url: "http://localhost:6500/kirimmedia",
+                method: "POST",
+                data: {nomor: no, gambar: isii[1], caption: caption},
+                cache: "false",
+                success: function(response){
+                    // app.dialog.alert(response.status,"Info");
+                },
+                error: function(){
+                    app.dialog.alert("WA Tidak Terhubung","Error");
+                }
+            })
+        }
+
+        konfigurasidb();
+        function konfigurasidb(){
+            db = openDatabase("dbmobile", "0.1", "Database Lokal Praktikum Mobile Programming", 5*1024*1024);
+            db.transaction(function(tx){
+                tx.executeSql("CREATE TABLE IF NOT EXISTS catatan (id CHAR(20), uraian TEXT, nominal INT(10), waktu DATETIME, PRIMARY KEY(id))");
+            });
+        }
+
+        function tampiltransaksi(){
+            db.transaction(function(tx){
+                tx.executeSql(`SELECT a.*, (SELECT SUM(nominal) FROM catatan WHERE waktu <= a.waktu) AS saldo FROM catatan AS a ORDER BY a.waktu`, [], function(tx, results){
+                    jmldata = results.rows.length;
+                    if(jmldata == 0){
+                        $("#bloktransaksi").html("");
+                    }else{
+                        var dt = "";
+                        for(i=0; i<jmldata; i++){
+                            id = results.rows.item(i).id;
+                            uraian = results.rows.item(i).uraian;
+                            nominal = results.rows.item(i).nominal;
+                            waktu = results.rows.item(i).waktu;
+                            saldo = results.rows.item(i).saldo;
+                            let vv = i == 0 ? "-55px" : "0px";
+                            let zz, jenis, nilai;
+                            if(nominal < 0){
+                                zz = "#dc143c";
+                                jenis = "pengeluaran";
+                                nilai = nominal * -1;
+                            }else{
+                                zz = "#63c35c";
+                                jenis = "pemasukan";
+                                nilai = nominal;
+                            }
+                            dt += `<div class="card card-outline radius10 dark" style="margin: ${vv} 7px 7px 7px; border-color: ${zz}; border-width: 2px;" data-id="${id}" data-uraian="${uraian}" data-nominal="${nilai}" data-waktu="${waktu}" data-jenis="${jenis}" onclick="kelolatransaksi(this)">
+                                <div class="card-content card-content-padding">
+                                    <div class="row" style="font-size: 16px;">
+                                        <div class="col-50">${tgljamindo(waktu)}<br>${uraian}</div>
+                                        <div class="col-25" style="text-align: right;">${ribuan(nominal)}</div>
+                                        <div class="col-25" style="text-align: right;">${ribuan(saldo)}</div>
+                                    </div>
+                                </div>
+                            </div>`;
+                        }
+                        $("#bloktransaksi").html(dt);
+                    }
+                });
+            });
+        }
+
+        function tampilbank(){
+            db.transaction(function(tx){
+                tx.executeSql(`SELECT a.*, (SELECT SUM(nominal) FROM catatan WHERE waktu <= a.waktu) AS saldo FROM catatan AS a ORDER BY a.waktu`, [], function(tx, results){
+                    jmldata = results.rows.length;
+                    if(jmldata == 0){
+                        $("#blokbank").html("");
+                    }else{
+                        var dt = "";
+                        var totalPengeluaran = 0;
+                        for(i=0; i<jmldata; i++){
+                            id = results.rows.item(i).id;
+                            uraian = results.rows.item(i).uraian;
+                            nominal = results.rows.item(i).nominal;
+                            waktu = results.rows.item(i).waktu;
+                            saldo = results.rows.item(i).saldo;
+                            let vv = i == 0 ? "-55px" : "0px";
+                            let zz, jenis, nilai, debit, kredit;
+                            if(nominal < 0){
+                                zz = "#dc143c";
+                                jenis = "pengeluaran";
+                                nilai = nominal * -1;
+                                kredit = ribuan(nominal);
+                                debit = "";
+                                totalPengeluaran += nilai;
+                            }else{
+                                zz = "#63c35c";
+                                jenis = "pemasukan";
+                                nilai = nominal;
+                                debit = ribuan(nominal);
+                                kredit = "";
+                            }
+                            dt += `<div class="card card-outline radius10 dark" style="margin: ${vv} 7px 7px 7px; border-color: ${zz}; border-width: 2px;" data-id="${id}" data-uraian="${uraian}" data-nominal="${nilai}" data-waktu="${waktu}" data-jenis="${jenis}" onclick="kelolatransaksi(this)">
+                                <div class="card-content card-content-padding">
+                                    <div class="row" style="font-size: 16px;">
+                                        <div class="col-50">${tgljamindo(waktu)}<br>${uraian}</div>
+                                        <div class="col-25" style="text-align: right;">${debit}</div>
+                                        <div class="col-25" style="text-align: right;">${kredit}</div>
+                                    </div>
+                                </div>
+                            </div>`;
+                        }
+                        $("#saldo").html(ribuan(saldo));
+                        $("#kredit").html(ribuan(totalPengeluaran));
+                        $("#blokbank").html(dt);
+                    }
+                });
+            });
+        }
+
+        function settransaksi(){
+            let tgljam = $("#transaksi_txttgl").val();
+            let uraian = $("#transaksi_txturaian").val();
+            let nominal = $("#transaksi_txtnominal").val();
+            let jenis = $("#transaksi_blokjudul").html();
+            if(tgljam == "" || uraian == "" || nominal == "" || parseInt(nominal) === 0){
+                app.dialog.alert("Ada Isian yang masih Kosong atau Nominal Bernilai 0","Error");
+                return;
+            }
+            nominal = jenis.toLowerCase() == "pengeluaran" ? parseInt(nominal) * -1 : parseInt(nominal);
+            db.transaction(function(tx){
+                tx.executeSql(`SELECT SUM(nominal) AS saldo FROM catatan`, [], function (tx, results){
+                    let saldo = results.rows.item(0).saldo || 0; // Retrieve the current balance (saldo) from the database
+                if (saldo + nominal < 0) {
+                    app.dialog.alert("Saldo tidak mencukupi untuk menambah pengeluaran", "Error");
+                    return;
+                }
+                let dd = new Date();
+                let idtrans = String(dd.getTime());
+                tx.executeSql("INSERT INTO catatan VALUES(?,?,?,?)", [idtrans.slice(0, -2), uraian, nominal, tgljam.replace("T"," ")],
+                    function(tx){
+                        app.dialog.alert("Tambah Transaksi Berhasil","Info");
+                        $(".formt").val("");
+                        app.views.main.router.back();
+                    },
+                    function(){
+                        app.dialog.alert("Tambah Transaksi Gagal","Info");
+                    }
+                )
+                })
+            });
+        }
+
+        function kelolatransaksi(el){
+            let id = $(el).data("id");
+            let uraian = $(el).data("uraian");
+            let nominal = $(el).data("nominal");
+            let waktu = $(el).data("waktu");
+            let jenis = $(el).data("jenis");
+            sessionStorage.setItem("pilihtrans", `${id}|${uraian}|${nominal}|${waktu}|${jenis}`);
+            app.views.main.router.navigate("/transaksiu/");
+        }
+
+        function updatetransaksi(){
+            let id = $("#transaksi_txtid").val();
+            let tgljam = $("#transaksi_txttgl").val();
+            let uraian = $("#transaksi_txturaian").val();
+            let nominal = $("#transaksi_txtnominal").val();
+            let jenis = $("#transaksi_blokjudul").html();
+            if(tgljam == "" || uraian == "" || nominal == "" || parseInt(nominal) == 0){
+                app.dialog.alert("Ada Isian yang masih Kosong atau Nominal Bernilai 0","Error");
+                return;
+            }
+            nominal = jenis.toLowerCase() == "pengeluaran" ? parseInt(nominal) * -1 : parseInt(nominal);
+            db.transaction(function(tx){
+                tx.executeSql("UPDATE catatan SET uraian=?, nominal=?, waktu=? WHERE id=?", [uraian, nominal, tgljam.replace("T"," "), id],
+                function(tx){
+                    app.dialog.alert("Update Transaksi Berhasil","Info");
+                    app.views.main.router.back();
+                },
+                function(){
+                    app.dialog.alert("Update Transaksi Gagal","Info");
+                }
+                );
+            });
+        }
+
+        function hapustransaksi(el){
+            let id = $("#transaksi_txtid").val();
+            app.dialog.confirm("Anda Yakin Ingin Menghapus ?","Info",
+                function(){
+                db.transaction(function(tx){
+                    tx.executeSql("DELETE FROM catatan WHERE id=?", [id],
+                    function(tx){
+                        app.dialog.alert("Hapus Transaksi Berhasil","Info");
+                        app.views.main.router.back();
+                    },
+                    function(){
+                        app.dialog.alert("Hapus Transaksi Gagal","Info");
+                    }
+                    );
+                });
+                }
+            );
+        }
+
+        // function backupfile(){
+        //     db.transaction(function(tx){
+        //         tx.executeSql("SELECT * FROM catatan", [], function(tx, results){
+        //             jmldata = results.rows.length;
+        //             if(jmldata == 0){
+        //                 app.dialog.alert("Data Kosong Backup di Batalkan","Error");
+        //                 return;
+        //             }else{
+        //                 var dt = "";
+        //                 for(i=0; i<jmldata; i++){
+        //                     id = results.rows.item(i).id;
+        //                     uraian = results.rows.item(i).uraian;
+        //                     nominal = results.rows.item(i).nominal;
+        //                     waktu = results.rows.item(i).waktu;
+        //                     dt += `${id}|${uraian}|${nominal}|${waktu}#`;
+        //                 }
+        //                 let xt = dt.slice(0, -1);
+        //                 let databackup = CryptoJS.AES.encrypt(xt, "12345678").toString();
+        //                 let lokasi = "file:///storage/emulated/0/Download/";
+        //                 let namafile = "backup_catatan.mpx";
+        //                 app.dialog.confirm("Anda Yakin Ingin Backup Data ?", "Backup",
+        //                     function(){
+        //                         window.resolveLocalFileSystemURL(lokasi, function(dir){
+        //                             dir.getFile(namafile, {create:true}, function(fileEntry){
+        //                                 fileEntry.createWriter(function(fileWriter){
+        //                                     fileWriter.onwriteend = function(e){
+        //                                         app.dialog.alert("Backup Selesai","Berhasil");
+        //                                     };
+        //                                     fileWriter.onerror = function(e){
+        //                                         app.dialog.alert(e.toString(),"Gagal");
+        //                                     };
+        //                                     let blob = new Blob([databackup], {type: 'text/plain'});
+        //                                     fileWriter.write(blob);
+        //                                 })
+        //                             })
+        //                         })
+        //                     }
+        //                 );
+        //             }
+        //         })
+        //     })
+        // }
+
+        function backupfile(){
+            db.transaction(function(tx){
+                tx.executeSql("SELECT * FROM catatan", [], function(tx, results){
+                    jmldata = results.rows.length;
+                    if(jmldata == 0){
+                        app.dialog.alert("Data Kosong Backup di Batalkan","Error");
+                        return;
+                    }else{
+                        var dt = "";
+                        for(i=0; i<jmldata; i++){
+                            id = results.rows.item(i).id;
+                            uraian = results.rows.item(i).uraian;
+                            nominal = results.rows.item(i).nominal;
+                            waktu = results.rows.item(i).waktu;
+                            dt += `${id}|${uraian}|${nominal}|${waktu}#`;
+                        }
+                        let xt = dt.slice(0, -1)
+                        let databackup = CryptoJS.AES.encrypt(xt, "12345678").toString();
+                        let lokasi = "file:///storage/emulated/0/Download/";
+                        let namafile = "backup_transaksi.mpx";
+                        app.dialog.confirm("Anda Yakin Ingin Backup Data ?", "Backup",
+                            function(){
+                                window.resolveLocalFileSystemURL(lokasi, function(dir){
+                                    dir.getFile(namafile, {create:true}, function(fileEntry){
+                                        fileEntry.createWriter(function(fileWriter){
+                                            fileWriter.onwriteend = function(e) {
+                                                app.dialog.alert("Backup Selesai", "Berhasil");
+                                            };
+                                            fileWriter.onerror = function(e) {
+                                                app.dialog.alert(e.toString(),"Gagal");
+                                            };
+                                            let blob = new Blob([databackup], {type: 'text/plain'});
+                                            fileWriter.write(blob);
+                                        })
+                                    })
+                                })
+                            }
+                        );
+                    }
+                })
+            })
+        }
+
+        // function restorefile(){
+        //     app.dialog.confirm("Anda Yakin Ingin Restore Data ?","Restore",
+        //         function(){
+        //             fileChooser.open(function(uri){
+        //                 window.FilePath.resolveNativePath(uri, function(path){
+        //                     window.resolveLocalFileSystemURL(path, pilihsukses, pilihgagal);
+        //                     function pilihgagal(e){app.dialog.alert(e,"error");}
+        //                     function pilihsukses(fileEntry){
+        //                         fileEntry.file(function(file){
+        //                             let reader = new FileReader();
+        //                             reader.onloadend = function(e){
+        //                                 let item = this.result;
+        //                                 let bytes = CryptoJS.AES.decrypt(item, "12345678");
+        //                                 let teksasli = bytes.toString(CryptoJS.enc.Utf8);
+        //                                 db.transaction(function(tx){
+        //                                     tx.executeSql("DELETE FROM catatan");
+        //                                     let no = 0;
+        //                                     let databesar = teksasli.split("#");
+        //                                     for(x=0; x<=(databesar.length-1); x++){
+        //                                         let datakecil = databesar[x].split("|");
+        //                                         let id = datakecil[0];
+        //                                         let uraian = datakecil[1];
+        //                                         let nominal = datakecil[2];
+        //                                         let waktu = datakecil[3];
+        //                                         tx.executeSql("INSERT INTO catatan VALUES(?,?,?,?)", [id, uraian, nominal, waktu],
+        //                                             function(tx){no++;}
+        //                                         );
+        //                                         if(x == (databesar.length-1)){
+        //                                             app.dialog.alert("Data Berhasil di Import","Berhasil");
+        //                                             tampiltransaksi();
+        //                                         }
+        //                                     }
+        //                                 })
+        //                             };
+        //                             reader.readAsText(file);
+        //                         });
+        //                     }
+        //                 }, function(){
+        //                     app.dialog.alert("File Tidak Terdeteksi","Error");
+        //                 });
+        //             });
+        //         }
+        //     );
+        // }
+
+        function restorefile(){
+            app.dialog.confirm("Anda Yakin Ingin Restore Data ?","Restore",
+                function(){
+                    fileChooser.open(function(uri){
+                        window.FilePath.resolveNativePath(uri, function(path){
+                            window.resolveLocalFileSystemURL(path, pilihsukses, pilihgagal);
+                            function pilihgagal(e){app.dialog.alert(e,"error");}
+                            function pilihsukses(fileEntry){
+                                fileEntry.file(function(file){
+                                    let reader = new FileReader();
+                                    reader.onloadend = function(e){
+                                        let item = this.result;
+                                        let bytes = CryptoJS.AES.decrypt(item, "12345678");
+                                        let teksasli = bytes.toString(CryptoJS.enc.Utf8);
+                                        db.transaction(function(tx){
+                                            tx.executeSql("DELETE FROM catatan");
+                                            let no = 0;
+                                            let databesar = teksasli.split("#");
+                                            for(x=0; x<=(databesar.length-1); x++){
+                                                let datakecil = databesar[x].split("|");
+                                                let id = datakecil[0];
+                                                let uraian = datakecil[1];
+                                                let nominal = datakecil[2];
+                                                let waktu = datakecil[3];
+                                                tx.executeSql("INSERT INTO catatan VALUES(?,?,?,?)", [id, uraian, nominal, waktu],
+                                                    function(tx){no++;}
+                                                );
+                                                if(x == (databesar.length-1)){
+                                                    app.dialog.alert("Data Berhasil di Import","Berhasil");
+                                                    tampiltransaksi();
+                                                }
+                                            }
+                                        })
+                                    };
+                                    reader.readAsText(file);
+                                });
+                            }
+                        }, function(){
+                            app.dialog.alert("File Tidak Terdeteksi","Error");
+                        });
+                    });
+                }
+            );
+        }
+
+        function backuponline(){
+            db.transaction(function(tx){
+                tx.executeSql("SELECT * FROM catatan", [], function(tx, results){
+                    jmldata = results.rows.length;
+                    if(jmldata == 0){
+                        app.dialog.alert("Data Kosong Backup di Batalkan", "Error");
+                        return;
+                    }else{
+                        var dt = "";
+                        for(i=0; i<jmldata; i++){
+                            id = results.rows.item(i).id;
+                            uraian = results.rows.item(i).uraian;
+                            nominal = results.rows.item(i).nominal;
+                            waktu = results.rows.item(i).waktu;
+                            dt += `${id}|${uraian}|${nominal}|${waktu}#`;
+                        }
+                        let xt = dt.slice(0, -1);
+                        app.dialog.confirm("Anda Yakin Ingin Membackup Secara Online?","Info",
+                            function(){
+                                app.dialog.progress("Kirim Data ...");
+                                $.ajax({
+                                    url: "https://api.hisyamyahya3.my.id/Api/backup",
+                                    method: "POST",
+                                    data: {datax: xt},
+                                    cache: "false",
+                                    timeout: 40000,
+                                    success: function(respon){
+                                        app.dialog.close();
+                                        let data = JSON.parse(respon);
+                                        let pesan = `Total Data Backup: ${data.total},<br>Data Berhasil:${data.berhasil},<br>Data Gagal: ${data.gagal}`;
+                                        app.dialog.alert(pesan,"Info Backup");
+                                    },
+                                    error: function(){
+                                        app.dialog.close();
+                                        app.dialog.alert("Koneksi ke Server Gagal","Error");
+                                    }
+                                });
+                            }
+                        )
+                    }
+                })
+            })
+        }
+
+        function downloaddata(){
+            app.dialog.confirm("Anda Yakin Ingin Me-restore Data ?", "Info",
+                function(){
+                    app.dialog.progress("Download Data ...");
+                    $.getJSON("https://api.hisyamyahya3.my.id/Api/download", function(result){
+                        app.dialog.close();
+                        if(result.length !=0){
+                            db.transaction(function(tx){
+                                tx.executeSql("DELETE FROM catatan");
+                            });
+                            $.each(result, function(i, kolom){
+                                let id = kolom.id;
+                                let uraian = kolom.uraian;
+                                let nominal = kolom.nominal;
+                                let waktu = kolom.waktu.slice(0, -3);
+                                db.transaction(function(tx){
+                                    tx.executeSql("INSERT INTO catatan VALUES(?,?,?,?)", [id, uraian, nominal, waktu]);
+                                })
+                            });
+                            app.dialog.alert("Data Berhasil di Restore","Info");
+                        }else{
+                            app.dialog.alert("Data Backup Kosong, Restore di batalkan","Info");
+                        }
+                        tampiltransaksi();
+                    })
+                }
+            )
+        }
+
+        function cetak(){
+            let dt = `<html><table border="1">
+                <tr>
+                    <td>Tanggal</td>
+                    <td>Uraian</td>
+                    <td>Debit</td>
+                    <td>Kredit</td>
+                    <td>Saldo</td>
+                </tr>`;
+                db.transaction(function(tx){
+                    let sql = "SELECT a.*, (SELECT SUM(nominal) FROM catatan WHERE waktu <= a.waktu) AS saldo FROM catatan AS a ORDER BY a.waktu";
+                    tx.executeSql(sql, [], function(tx, results){
+                    jmldata = results.rows.length;
+                    if(jmldata == 0){
+                        app.dialog.alert("Data Kosong Cetak di Batalkan", "Error");
+                        return;
+                    }else{
+                        for(i=0; i<jmldata; i++){
+                            id = results.rows.item(i).id;
+                            uraian = results.rows.item(i).uraian;
+                            nominal = results.rows.item(i).nominal;
+                            waktu = results.rows.item(i).waktu;
+                            saldo = results.rows.item(i).saldo;
+                            let debit, kredit;
+                            if(nominal < 0){
+                                debit = "";
+                                kredit = ribuan(parseInt(nominal) * (-1));
+                            }else{
+                                kredit = "";
+                                debit = ribuan(parseInt(nominal));
+                            }
+                            dt += `<tr>
+                                <td>${tgljamindo(waktu)}</td>
+                                <td>${uraian}</td>
+                                <td>${debit}</td>
+                                <td>${kredit}</td>
+                                <td>${saldo}</td>
+                            </tr>`;
+                        }
+                        let datacetak = `${dt}</table></html>`;
+                        var opsi = {
+                            documentSize: 'A4',
+                            type: 'share',
+                            fileName: `cetak_keuangan.pdf`
+                        }
+                        pdf.fromData(datacetak, opsi)
+                        .then((stats) => console.log(stats))
+                        .catch((err) => console.log(err))
+                    }
+                })
+            })
+        }
+    </script>
+</html>

@@ -1,0 +1,67 @@
+<template>
+    <div class="page warna-hitam">
+        <div class="navbar warna-biru">
+            <div class="navbar-inner">
+                <div class="title teks-putih">
+                    Deteksi Lokasi
+                </div>
+                <div class="right">
+                    <a href="#" class="link back"><i class="icon f7-icons teks-putih">multiply</i></a>
+                </div>
+            </div>
+        </div>
+        <div class="warna-biru" style="width: 100%; height: 100px"></div>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" style="margin-top: -1px;"><path fill="#6495ed" fill-opacity="1" d="M0,128L48,128C96,128,192,128,288,149.3C384,171,480,213,576,245.3C672,277,768,299,864,282.7C960,267,1056,213,1152,186.7C1248,160,1344,160,1392,160L1440,160L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"></path></svg>
+        <div class="card card-outline dark" style="margin: -125px 10px 10px 10px; border-radius: 15px;">
+            <div class="card-content card-content-padding">
+                <div class="row" style="margin-bottom: 25px;">
+                    <div class="col-100 font17" style="text-align: justify;">Form Deteksi Lokasi Anda Berdasarkan GPS</div>
+                </div>
+                <div class="list" style="margin-bottom: 20px;">
+                    <div class="item-content item-input" style="margin-bottom: 10px;">
+                        <div class="col-15"><div class="item-media"><i class="icon f7-icons">location</i></div></div>
+                        <div class="item-inner">
+                            <div class="item-title item-label">Lintang</div>
+                            <div class="item-input-wrap"><input type="text" id="gps_txtlintang" readonly /></div>
+                        </div>                        
+                    </div>
+                    <div class="item-content item-input" style="margin-bottom: 10px;">
+                        <div class="col-15"><div class="item-media"><i class="icon f7-icons">map_pin</i></div></div>
+                        <div class="item-inner">
+                            <div class="item-title item-label">Bujur</div>
+                            <div class="item-input-wrap"><input type="text" id="gps_txtbujur" readonly /></div>
+                        </div>                        
+                    </div>
+                </div>
+                <div class="row">
+                    <button class="col-50 button button-fill color-red" @click="${()=>resetlokasi()}">Reset</button>
+                    <button class="col-50 button button-fill color-blue" @click="${()=>deteksilokasi()}">Deteksi</button>
+                </div> 
+            </div>
+        </div>
+        <div class="fab fab-right-bottom warna-biru fab-morph">
+            <a href="#" class="sheet-open" data-sheet="#gps_sheetopsi"><i class="icon f7-icons">location</i></a>
+        </div>
+        <div class="sheet-modal demo-sheet-swipe-to-close warna-abu" style="height: auto;" id="gps_sheetopsi">
+            <div class="sheet-modal-inner">
+                <div class="swipe-handler"></div>
+                <div class="page-content">
+                    <div class="block-title block-title-large teks-putih">Share Ke</div>
+                    <div class="row baris-icon">
+                        <a href="#" class="col teks-tengah sheet-close teks-putih" @click="${()=>shareke('wa')}">
+                            <img src="img/whatsapp5.png" style="width: 50%;" /><br/>Whatsapp
+                        </a>
+                        <a href="#" class="col teks-tengah sheet-close teks-putih" @click="${()=>shareke('gmaps')}">
+                            <img src="img/maps.png" style="width: 50%;" /><br/>Google Maps
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+    export default function (props, ctx){
+        return $render;
+    }
+</script>

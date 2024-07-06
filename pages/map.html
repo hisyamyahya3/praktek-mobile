@@ -1,0 +1,72 @@
+<template>
+    <div class="page">
+        <div class="navbar warna-biru">
+            <div class="navbar-inner">
+                <div class="title teks-putih">
+                    Lokasi Pengadilan
+                </div>
+                <div class="right">
+                    <a href="#" class="link back"><i class="icon f7-icons teks-putih">multiply</i></a>
+                </div>
+            </div>
+        </div>
+        <div class="page-content" id="petaku"></div>
+        <div class="fab fab-extended fab-center-bottom">
+            <a href="#" @click="${()=>direksiLokasiSaya()}">
+                <i class="icon f7-icons if-not-md">plus</i>
+                <i class="icon material-icons md-only">explore</i>
+                <div class="fab-text">Rute</div>
+            </a>
+        </div>
+    </div>
+</template>
+<script>
+    export default function (props, ctx){
+        // let $on = ctx.$on;
+        // $on('pageInit', () => {
+        //     let hasilpeta = L.map('petaku').setView([-7.481311, 112.424242], 19);       
+        //     L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{maxZoom: 20, subdomains:['mt0','mt1','mt2','mt3']}).addTo(hasilpeta);
+        //     let icon = L.marker([-7.481311, 112.424242]).addTo(hasilpeta).bindPopup("Pengadilan Agama Mojokerto");
+
+        //     function direksiLokasiSaya() {
+        //         navigator.geolocation.getCurrentPosition(function(posisi) {
+        //             let lintang = posisi.coords.latitude;
+        //             let bujur = posisi.coords.longitude;
+
+        //             // Membuat marker lokasi pengguna
+        //             let markerSaya = L.marker([lintang, bujur]).addTo(hasilpeta).bindPopup("Lokasi Saya");
+
+        //             // Membuat rute menggunakan Leaflet Routing Machine
+        //             L.Routing.control({
+        //                 waypoints: [
+        //                     L.latLng(lintang, bujur), // Lokasi pengguna
+        //                     L.latLng(icon.getLatLng().lat, icon.getLatLng().lng) // Lokasi tujuan icon
+        //                 ],
+        //                 routeWhileDragging: true, // Memperbarui rute saat pengguna menggeser marker
+        //                 addWaypoints: false, // Menyembunyikan waypoint pada rute
+        //                 lineOptions: {
+        //                     styles: [{color: '#3388ff', opacity: 0.7, weight: 5}] // Mengatur penampilan rute
+        //                 },
+        //                 instructions: {
+        //                     show: false // Menyembunyikan detail estimasi rute
+        //                 },
+        //                 router: new L.Routing.OSRMv1({
+        //                     serviceUrl: 'https://router.project-osrm.org/route/v1'
+        //                 })
+        //             }).addTo(hasilpeta);
+
+        //             // Membuat tombol "Hapus Rute"
+        //             // let hapusButton = buatTombolHapusRute();
+        //             // hapusButton.addTo(hasilpeta);
+
+        //             // Pindahkan peta ke lokasi pengguna
+        //             hasilpeta.flyTo([lintang, bujur], 14);
+
+        //         }, function(error) {
+        //             app.dialog.alert(error.message, "Gagal");
+        //         }, { enableHighAccuracy: true });
+        //     }
+        //     })
+        return $render;
+    }
+</script>

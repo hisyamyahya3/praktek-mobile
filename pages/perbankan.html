@@ -1,0 +1,47 @@
+<template>
+    <div class="page warna-hitam">
+        <div class="navbar warna-biru">
+            <div class="navbar-inner">
+                <div class="title teks-putih">
+                    Perbankan
+                </div>
+                <div class="right">
+                    <a href="#" class="link back"><i class="icon f7-icons teks-putih">multiply</i></a>
+                </div>
+            </div>
+        </div>
+        <div class="warna-biru" style="width: 100%; height: 30px;">
+            <div class="card card-outline radius10 dark" style="margin: 55px 7px 10px 7px;">
+                <!-- <div class="card-header">
+                    <p>SALDO :</p><p id="saldo">?????</p>
+                    <p>TOTAL KREDIT :</p><p id="kredit">?????</p>                               
+                </div> -->
+                <div class="card-content card-content-padding">
+                    <div class="row" style="font-size: 18px;">
+                        <div class="col-50">Uraian</div>
+                        <div class="col-25" style="text-align: right;">Debit</div>
+                        <div class="col-25" style="text-align: right;">Kredit</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-content" id="blokbank" style="margin-top: 40px;"></div>
+        <div class="toolbar tabbar tabbar-labels toolbar-bottom tabs-swipeable no-shadow warna-abu">
+            <div class="toolbar-inner" style="display: flex; justify-content: center; align-items: center;">
+                <div class="col-30 teks-putih" style="text-align: center; margin-left: 5px;">Saldo: Rp.</div>
+                <div class="col-30 teks-putih" style="text-align: center; margin-left: 5px;" id="saldo">??????</div>
+                <div class="col-30 teks-putih" style="text-align: center; margin-left: 5px;">Total Kredit: Rp.</div>
+                <div class="col-30 teks-putih" style="text-align: center; margin-left: 5px;" id="kredit">??????</div>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+    export default function (props, ctx){
+        let $on = ctx.$on;
+        $on('pageAfterIn', () => {
+            tampilbank();
+        })
+        return $render;
+    }
+</script>

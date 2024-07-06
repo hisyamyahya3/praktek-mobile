@@ -1,0 +1,41 @@
+<template>
+    <div class="page">
+        <div class="navbar warna-biru">
+            <div class="navbar-inner">
+                <div class="title teks-putih">Detail Film</div>
+                <div class="right">
+                    <a href="#" class="link" @click="${()=>kirimgambar()}"><i class="icon f7-icons teks-putih">location</i></a>
+                    <a href="#" class="link" @click="${()=>ubahteks()}"><i class="icon f7-icons teks-putih">speaker_3</i></a>
+                    <a href="#" class="link back"><i class="icon f7-icons teks-putih">multiply</i></a>
+                </div>
+            </div>
+        </div>
+        <div class="warna-biru" style="width: 100%; height: 100px;"></div>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" style="margin-top: -1px"><path fill="#6495ed" fill-opacity="1" d="M0,128L48,149.3C96,171,192,213,288,224C384,235,480,213,576,192C672,171,768,149,864,133.3C960,117,1056,107,1152,117.3C1248,128,1344,160,1392,176L1440,192L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"></path></svg>
+        <div class="page-content" style="margin-top: -125px;">
+            <img id="detailsampul" style="width: 100%; margin-top: -50px;" alt="..." />
+            <p style="margin-left: 10px; margin-right: 10px; font-size: 18px;">
+                <b>Judul: </b><font id="detailjudul"></font><br/>
+                <b>Pemain: </b><font id="detailpemain"></font><br/>
+                <b>Tahun: </b><font id="detailtahun"></font><br/>
+                <b>Rating: </b><font id="detailrating"></font><br/>
+                <b>Sinopsis: </b><font id="detailsinopsis"></font>
+            </p><br/><br/><br/><br/><br/>
+        </div>
+    </div>
+</template>
+<script>
+    export default function (props, ctx){
+        let $on = ctx.$on;
+        $on('pageInit', () => {
+            let datakirim = app.views.main.router.currentRoute.query;
+            $("#detailsampul").attr("src", $("#" + datakirim.id).attr("src"));
+            $("#detailjudul").html(datakirim.jd);
+            $("#detailpemain").html(datakirim.aktor);
+            $("#detailtahun").html(datakirim.th);
+            $("#detailrating").html(datakirim.rate);
+            $("#detailsinopsis").html(datakirim.sinopsis);
+        })
+        return $render;
+    }
+</script>

@@ -1,0 +1,79 @@
+<template>
+    <div class="page warna-hitam">
+        <div class="navbar warna-biru">
+            <div class="navbar-inner">
+                <div class="title teks-putih">
+                    Daftar Transaksi
+                </div>
+                <div class="right">
+                    <a href="#" class="link back"><i class="icon f7-icons teks-putih">multiply</i></a>
+                </div>
+            </div>
+        </div>
+        <div class="warna-biru" style="width: 100%; height: 30px;">
+            <div class="card card-outline radius10 dark" style="margin: 55px 7px 10px 7px;">
+                <div class="card-content card-content-padding">
+                    <div class="row" style="font-size: 18px;">
+                        <div class="col-50">Uraian</div>
+                        <div class="col-25" style="text-align: right;">Nominal</div>
+                        <div class="col-25" style="text-align: right;">Saldo</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="fab fab-right-bottom warna-biru fab-morph">
+            <a href="#" class="sheet-open" data-sheet="#transaksi_sheetopsi"><i class="icon f7-icons">plus</i></a>
+        </div>
+        <div class="sheet-modal demo-sheet-swipe-to-close warna-abu" style="height: auto;" id="transaksi_sheetopsi">
+            <div class="sheet-modal-inner">
+                <div class="swipe-handler"></div>
+                <div class="page-content">
+                    <div class="block-title block-title-large teks-putih">Pilih Transaksi</div>
+                    <div class="row baris-icon">
+                        <a href="/transaksi/pemasukan/" class="col teks-tengah sheet-close teks-putih" data-transition="f7-circle">
+                            <img src="img/moneycard.png" style="width: 50%;" /><br/>Uang Masuk
+                        </a>
+                        <a href="/transaksi/pengeluaran/" class="col teks-tengah sheet-close teks-putih" data-transition="f7-circle">
+                            <img src="img/whatd_you_spend.png" style="width: 50%;" /><br/>Uang Keluar
+                        </a>
+                        <a href="#" class="col teks-tengah sheet-close teks-putih" @click="${()=>backupfile()}">
+                            <img src="img/oxygen_telegram.png" style="width: 50%;" /><br/>Backup File
+                        </a>
+                    </div>
+                    <div class="row baris-icon">
+                        <a href="#" class="col teks-tengah sheet-close teks-putih" @click="${()=>backuponline()}">
+                            <img src="img/oxygen_map.png" style="width: 50%;" /><br/>Backup Online
+                        </a>
+                        <a href="#" class="col teks-tengah sheet-close teks-putih" @click="${()=>restorefile()}">
+                            <img src="img/google_keep2.png" style="width: 50%;" /><br/>Restore Offline
+                        </a>
+                        <a href="#" class="col teks-tengah sheet-close teks-putih" @click="${()=>downloaddata()}">
+                            <img src="img/download6.png" style="width: 50%;" /><br/>Restore Online
+                        </a>
+                    </div>
+                    <div class="row baris-icon">
+                        <a href="#" class="col teks-tengah sheet-close teks-putih" @click="${()=>cetak()}">
+                            <img src="img/print.png" style="width: 50%;" /><br/>Cetak Data
+                        </a>
+                        <a href="#" class="col teks-tengah sheet-close">
+                            
+                        </a>
+                        <a href="#" class="col teks-tengah sheet-close">
+                            
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="page-content" id="bloktransaksi" style="margin-top: 40px;"></div>
+    </div>
+</template>
+<script>
+    export default function (props, ctx){
+        let $on = ctx.$on;
+        $on('pageAfterIn', () => {
+            tampiltransaksi();
+        })
+        return $render;
+    }
+</script>
